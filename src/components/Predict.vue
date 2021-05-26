@@ -11,9 +11,12 @@
 						</ul>
 					</td>
 					<td>
+						<div id="champSearch">
+							<input v-model="search" placeholder="Search" />
+						</div>
 						<ul class="champSelection">
 							<li v-for="(champ, name) in champ_name_map" :key="champ">
-								<img :src="getNamePortrait(name)" @click="selectChampion(ichamp_map[champ.toString()])">
+								<img v-if="searchName(name.toLowerCase())" :src="getNamePortrait(name)" @click="selectChampion(ichamp_map[champ.toString()])">
 								
 							</li>
 						</ul>
@@ -56,7 +59,8 @@ export default {
 		ichamp_map: ichamp_map,
 		champ_name_map: champ_name_map,
 		selected: [0,0],
-		outcome: null
+		outcome: null,
+		search: "",
 	}),
 	computed: {
 		blueSideChance: function() {
@@ -93,11 +97,15 @@ export default {
 				this.team1[this.selected[1]] = ichampId
 			}
 			this.outcome = null
+			this.search = ""
 
 			this.selected[1] += 1
 			this.selected[0] = (this.selected[0] + Math.floor(this.selected[1]/5)) % 2
 			this.selected[1] %= 5
 			this.predictModel()
+		},
+		searchName: function(champName) {
+			return champName.includes(this.search.toLowerCase())
 		},
 		predictModel: function() {
 			for (var j=0; j < 5; j++) {
@@ -145,17 +153,16 @@ table {
 td {
 	background: #000;
 	padding: 2vh;
+	height: 70vh;
 }
 .champSelection img {
-	width: 100%;
+	width: 8vh;
 }
 .champSelection li {
 	display: inline-block;
-	width: 8vh;
 }
 .predictTeam {
 	display: inline-block;
-	width: 100%;
 	background: #000;
 }
 .predictTeam img {
@@ -165,10 +172,26 @@ td {
 	margin-top: 1vh;
 	margin-bottom: 1vh;
 }
+#champSearch {
+	display: block;
+	padding-bottom:1vh;
+	padding-top:1vh;
+}
+#champSearch input {
+	background: #111;
+	color: #FFF;
+	padding: 1vh;
+	border: none;
+	width: 30vw;
+	min-width: 300px;
+	height: 40px;
+	text-align: center;
+	font-size: 20px;
+}
 .champSelection {
-	display: inline-block;
+	display: block;
 	height: 100%;
-	max-height: 70vh;
+	max-height: calc(70vh - (40px + 4vh));
 	overflow-x: hidden;
 	overflow-y: auto;
 }
@@ -196,7 +219,7 @@ td {
 	padding: 1vh;
 	color: white;
 	font-size: 3vh;
-	height: 25vh;
+	height: 29vh;
 }
 .blueSideText {
 	color: #46F;
