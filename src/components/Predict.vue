@@ -90,7 +90,6 @@ export default {
 			this.selected[1] = playeri
 		},
 		selectChampion: function(ichampId) {
-			console.log(ichampId)
 			if (this.selected[0]) {
 				this.team2[this.selected[1]] = ichampId
 			} else {
@@ -105,7 +104,10 @@ export default {
 			this.predictModel()
 		},
 		searchName: function(champName) {
-			return champName.includes(this.search.toLowerCase())
+			var searchLower = this.search.toLowerCase()
+			if (searchLower == "monkeyking")
+				searchLower = "wukong"
+			return champName.includes(searchLower)
 		},
 		predictModel: function() {
 			for (var j=0; j < 5; j++) {
@@ -120,15 +122,14 @@ export default {
 			for (j = 0; j < 5; j++)
 				players.push({"champion": i_champ_map[this.team2[j]], "team": 1})
 			var games = {"games":[{"players":players}]}
-			console.log(this.model)
-			console.log(Constants.HOSTNAME)
-			console.log(games)
 			var headers = {'Content-Type':'application/json'}
 			axios.post(Constants.HOSTNAME + '/predict', games, headers).then( response => {
 				this.outcome = parseFloat(response.data.predictions[0].avg_blue_chance)
-				console.log(this.outcome)
 			})
 		}
+	},
+	created: function() {
+		this.champ_name_map = Object.fromEntries(Object.entries(this.champ_name_map).sort())
 	}
 }
 </script>
@@ -183,7 +184,7 @@ td {
 	padding: 1vh;
 	border: none;
 	width: 30vw;
-	min-width: 300px;
+	min-width: 150px;
 	height: 40px;
 	text-align: center;
 	font-size: 20px;

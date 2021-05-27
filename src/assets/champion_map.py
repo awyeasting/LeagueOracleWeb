@@ -56,18 +56,37 @@ def getAndSaveChampionSquares():
 	for champ_id, champ_name in champion_map.items():
 		#print(champ_name, champ_id)
 		url = CHAMP_SQUARE_PATH.format(version, champ_name)
+		if champ_name == "MonkeyKing":
+			champ_name = "Wukong"
 		imgPath = "ChampionSquares/{}.png".format(champ_name)
 		#print(url, imgPath)
 		urllib.request.urlretrieve(url, imgPath)
 
+def removeMonkeyKing(d):
+	d2 = {}
+	for champion in d.items():
+		if champion[0] == "MonkeyKing":
+			d2["Wukong"] = champion[1]
+			d2.pop(champion[0], None)
+		elif champion[1] == "MonkeyKing":
+			d2[champion[0]] = "Wukong"
+		else:
+			d2[champion[0]] = champion[1]
+
+	return d2
 
 if __name__ == "__main__":
 	print(champion_map)
 	print(internal_champion_map)
 
+	getAndSaveChampionSquares()
+
+	champion_map = removeMonkeyKing(champion_map)
+	champion_name_map = removeMonkeyKing(champion_name_map)
+	internal_champion_map = removeMonkeyKing(internal_champion_map)
+	inv_internal_champion_map = removeMonkeyKing(inv_internal_champion_map)
+
 	saveDictAsJson(champion_map, "ChampionMaps/champion_map.json")
 	saveDictAsJson(champion_name_map, "ChampionMaps/champion_name_map.json")
 	saveDictAsJson(internal_champion_map, "ChampionMaps/internal_champion_map.json")
 	saveDictAsJson(inv_internal_champion_map, "ChampionMaps/inv_internal_champion_map.json")
-
-	#getAndSaveChampionSquares()
